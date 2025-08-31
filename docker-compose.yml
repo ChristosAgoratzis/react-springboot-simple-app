@@ -1,63 +1,40 @@
-name: Push to DockerHub Registry Pipeline
+version: '3.8'
 
-on:
-  push:
-    branches:
-      - main
+services:
+  frontend:
+    build:
+      context: ./react-app  
+      dockerfile: Dockerfile
+    container_name: react_app
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
 
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
+  backend:
+    build:
+      context: ./springboot-app
+      dockerfile: Dockerfile
+    container_name: spring_app
+    environment:
+      - SPRING_DATASOURCE_URL= ${JAVASPRING_DATASOURCE_URL}
+      - SPRING_DATASOURCE_USERNAME= ${DATABASE_USER}
+      - SPRING_DATASOURCE_PASSWORD= ${DATABASE_PASSWORD}
+    depends_on:
+      - db
 
-    env:
-      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+  db:
+    image: postgres:15
+    container_name: postgres_db
+    restart: always
+    environment:
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: ${DATABASE_NAME}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '22'
-
-      - name: Install frontend dependencies
-        run: |
-          cd react-app
-          npm ci
-  
-      - name: Build frontend
-        run: |
-          cd react-app
-          npm run build
-
-      - name: Setup Java
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '21'
-
-      - name: Build backend
-        run: |
-          cd springboot-app
-          mvn clean package -DskipTests
-
-      - name: Docker login
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Docker Compose Build & Push
-        run: |
-          COMMIT_SHA=$(echo $GITHUB_SHA | cut -c1-7)
-          # Build all images
-          docker-compose -f docker-compose.yml build
-          # Tag images με commit SHA
-          docker tag ${DOCKERHUB_USERNAME}/frontend:latest ${DOCKERHUB_USERNAME}/frontend:$COMMIT_SHA
-          docker tag ${DOCKERHUB_USERNAME}/backend:latest ${DOCKERHUB_USERNAME}/backend:$COMMIT_SHA
-          # Push all images
-          docker-compose -f docker-compose.yml push
-          docker push ${DOCKERHUB_USERNAME}/frontend:$COMMIT_SHA
-          docker push ${DOCKERHUB_USERNAME}/backend:$COMMIT_SHA
+networks:
+  full-stack-app-network:
+volumes:
+  pgdata:
