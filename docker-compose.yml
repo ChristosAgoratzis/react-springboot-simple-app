@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   frontend:
+    image: christaras100/react_app:latest
     build:
       context: ./react-app  
       dockerfile: Dockerfile
@@ -10,8 +11,11 @@ services:
       - "80:80"
     depends_on:
       - backend
+    networks:
+      - full-stack-app-network
 
   backend:
+    image: christaras100/spring_app:latest
     build:
       context: ./springboot-app
       dockerfile: Dockerfile
@@ -22,6 +26,8 @@ services:
       - SPRING_DATASOURCE_PASSWORD= ${DATABASE_PASSWORD}
     depends_on:
       - db
+    networks:
+      - full-stack-app-network
 
   db:
     image: postgres:15
@@ -33,6 +39,8 @@ services:
       POSTGRES_DB: ${DATABASE_NAME}
     volumes:
       - pgdata:/var/lib/postgresql/data
+    networks:
+      - full-stack-app-network
 
 networks:
   full-stack-app-network:
