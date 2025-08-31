@@ -1,18 +1,23 @@
 import React, { useState, useEffect } from "react";
 
-const API_BASE = "http://localhost:8080";
-
 export default function App() {
   const [users, setUsers] = useState([]);
   const [formData, setFormData] = useState({});
   const [editingId, setEditingId] = useState(null);
   const [formVisible, setFormVisible] = useState(false);
 
+  // Base URL: relative paths για να δουλεύει με reverse proxy
+  const API_BASE = "/api";
+
   // Fetch Users
   const fetchUsers = async () => {
-    const res = await fetch(`${API_BASE}/users`);
-    const data = await res.json();
-    setUsers(data);
+    try {
+      const res = await fetch(`${API_BASE}/users`);
+      const data = await res.json();
+      setUsers(data);
+    } catch (err) {
+      console.error("Error fetching users:", err);
+    }
   };
 
   useEffect(() => {
@@ -21,8 +26,12 @@ export default function App() {
 
   // Handle Delete
   const handleDelete = async (id) => {
-    await fetch(`${API_BASE}/users/${id}`, { method: "DELETE" });
-    fetchUsers();
+    try {
+      await fetch(`${API_BASE}/users/${id}`, { method: "DELETE" });
+      fetchUsers();
+    } catch (err) {
+      console.error("Error deleting user:", err);
+    }
   };
 
   // Handle Edit
@@ -42,30 +51,39 @@ export default function App() {
   // Handle form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (editingId) {
-      await fetch(`${API_BASE}/users/${editingId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-    } else {
-      await fetch(`${API_BASE}/users`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+    try {
+      if (editingId) {
+        await fetch(`${API_BASE}/users/${editingId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        });
+      } else {
+        await fetch(`${API_BASE}/users`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        });
+      }
+      fetchUsers();
+      setFormVisible(false);
+      setFormData({});
+      setEditingId(null);
+    } catch (err) {
+      console.error("Error saving user:", err);
     }
-    fetchUsers();
-    setFormVisible(false);
-    setFormData({});
-    setEditingId(null);
   };
 
   return (
     <div style={{ padding: "20px", fontFamily: "Arial" }}>
       <h1>Users</h1>
       <button onClick={handleAdd}>+ Add User</button>
-      <table border="1" cellPadding="5" cellSpacing="0" style={{ marginTop: "10px", width: "100%" }}>
+      <table
+        border="1"
+        cellPadding="5"
+        cellSpacing="0"
+        style={{ marginTop: "10px", width: "100%" }}
+      >
         <thead>
           <tr>
             <th>Username</th>
@@ -88,7 +106,13 @@ export default function App() {
       </table>
 
       {formVisible && (
-        <div style={{ marginTop: "30px", border: "1px solid #ccc", padding: "10px" }}>
+        <div
+          style={{
+            marginTop: "30px",
+            border: "1px solid #ccc",
+            padding: "10px",
+          }}
+        >
           <h2>{editingId ? "Update" : "Add"} User</h2>
           <form onSubmit={handleSubmit}>
             <div>
@@ -96,7 +120,9 @@ export default function App() {
               <input
                 type="text"
                 value={formData.username || ""}
-                onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, username: e.target.value })
+                }
                 required
               />
             </div>
@@ -105,7 +131,9 @@ export default function App() {
               <input
                 type="email"
                 value={formData.email || ""}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
                 required
               />
             </div>
@@ -114,7 +142,9 @@ export default function App() {
               <input
                 type="password"
                 value={formData.passwordHash || ""}
-                onChange={(e) => setFormData({ ...formData, passwordHash: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, passwordHash: e.target.value })
+                }
                 required={!editingId}
               />
             </div>
@@ -122,7 +152,11 @@ export default function App() {
               <button type="submit">Save</button>
               <button
                 type="button"
-                onClick={() => { setFormVisible(false); setFormData({}); setEditingId(null); }}
+                onClick={() => {
+                  setFormVisible(false);
+                  setFormData({});
+                  setEditingId(null);
+                }}
                 style={{ marginLeft: "10px" }}
               >
                 Cancel
