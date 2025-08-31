@@ -45,6 +45,5 @@ jobs:
           docker compose -f docker-compose.yml push
         env:
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-        env:
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }} 
 
