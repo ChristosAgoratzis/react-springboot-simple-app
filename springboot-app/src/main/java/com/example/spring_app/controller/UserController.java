@@ -1,43 +1,53 @@
 package com.example.spring_app.controller;
 
-import org.springframework.web.bind.annotation.*;
 import com.example.spring_app.model.User;
-import com.example.spring_app.service.UserService;
+import com.example.spring_app.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
 @RequestMapping("/users")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:5173") 
 public class UserController {
 
-    private final UserService userService;
+    @Autowired
+    private UserRepository userRepository;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
-
-    @PostMapping
-    public User createUser(@RequestBody User user) {
-        return userService.createUser(user);
-    }
-
+    // GET /users
     @GetMapping
     public List<User> getAllUsers() {
-        return userService.getAllUsers();
+        return userRepository.findAll();
     }
 
-    @GetMapping("/{id}")
-    public User getUser(@PathVariable Long id) {
-        return userService.getUserById(id);
+    // POST /users
+    @PostMapping
+    public User createUser(@RequestBody User user) {
+        return userRepository.save(user);
     }
 
+    // PUT /users/{id}
     @PutMapping("/{id}")
-    public User updateUser(@PathVariable Long id, @RequestBody User user) {
-        return userService.updateUser(id, user);
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User userDetails) {
+        return userRepository.findById(id).map(user -> {
+            user.setUsername(userDetails.getUsername());
+            user.setEmail(userDetails.getEmail());
+            if (userDetails.getPasswordHash() != null && !userDetails.getPasswordHash().isEmpty()) {
+                user.setPasswordHash(userDetails.getPasswordHash());
+            }
+            userRepository.save(user);
+            return ResponseEntity.ok(user);
+        }).orElse(ResponseEntity.notFound().build());
     }
 
+    // DELETE /users/{id}
     @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable Long id) {
-        userService.deleteUser(id);
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        return userRepository.findById(id).map(user -> {
+            userRepository.delete(user);
+            return ResponseEntity.ok().<Void>build();
+        }).orElse(ResponseEntity.notFound().build());
     }
 }
