@@ -48,6 +48,6 @@ jobs:
 
       - name: Docker Compose Build & Push
         run: |
-          docker-compose -f docker-compose.yml build
-          docker-compose -f docker-compose.yml push
+          docker compose -f docker-compose.yml build
+          docker compose -f docker-compose.yml push
 
