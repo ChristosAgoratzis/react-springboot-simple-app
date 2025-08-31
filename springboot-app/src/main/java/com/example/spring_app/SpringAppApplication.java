@@ -1,0 +1,20 @@
+package com.example.spring_app;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.CommandLineRunner;
+import com.example.spring_app.model.User;
+import com.example.spring_app.model.Item;
+import com.example.spring_app.repository.UserRepository;
+import com.example.spring_app.repository.ItemRepository;
+import org.springframework.context.annotation.Bean;
+
+
+@SpringBootApplication
+public class SpringAppApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(SpringAppApplication.class, args);
+
+	}
+}
