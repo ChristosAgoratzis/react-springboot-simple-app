@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   frontend:
     image: christaras100/react_app:latest
@@ -21,9 +19,12 @@ services:
       dockerfile: Dockerfile
     container_name: spring_app
     environment:
-      - SPRING_DATASOURCE_URL= ${JAVASPRING_DATASOURCE_URL}
-      - SPRING_DATASOURCE_USERNAME= ${DATABASE_USER}
-      - SPRING_DATASOURCE_PASSWORD= ${DATABASE_PASSWORD}
+      - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
+      - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_JPA_SHOW_SQL=true
+      - SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL=true
     depends_on:
       - db
     networks:

@@ -1,0 +1,86 @@
+---
+- name: Deploy React-Springboot App on Ubuntu 24.04
+  hosts: ec2-hosts
+  become: yes
+  vars:
+    app_dir: /opt/react-springboot-app
+
+  tasks:
+
+    - name: Install required packages
+      ansible.builtin.apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gnupg
+          - lsb-release
+        state: present
+        update_cache: yes
+
+    - name: Add Docker GPG key
+      ansible.builtin.apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker Repository
+      ansible.builtin.apt_repository:
+        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu jammy stable
+        state: present
+
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: yes
+
+    - name: Install Docker CE
+      ansible.builtin.apt:
+        name: 
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+        state: latest
+
+    - name: Ensure Docker service is running
+      ansible.builtin.service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Add current user to docker group
+      ansible.builtin.user:
+        name: "{{ ansible_user }}"
+        groups: docker
+        append: yes
+
+    - name: Install Docker Compose plugin
+      ansible.builtin.apt:
+        name: docker-compose-plugin
+        state: present
+
+    - name: Create application directory
+      ansible.builtin.file:
+        path: "{{ app_dir }}"
+        state: directory
+        mode: '0755'
+
+    - name: Copy docker-compose.yml
+      ansible.builtin.copy:
+        src: docker-compose.yml
+        dest: "{{ app_dir }}/docker-compose.yml"
+        mode: '0644'
+
+    - name: Copy .env file
+      ansible.builtin.copy:
+        src: .env
+        dest: "{{ app_dir }}/.env"
+        mode: '0644'
+
+    - name: Pull Docker images
+      ansible.builtin.shell: docker compose pull
+      args:
+        chdir: "{{ app_dir }}"
+
+    - name: Start Docker Compose application
+      ansible.builtin.shell: docker compose up -d
+      args:
+        chdir: "{{ app_dir }}"
