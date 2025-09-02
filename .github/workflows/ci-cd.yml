@@ -60,7 +60,7 @@ jobs:
           push: true
           tags: |
             christaras100/react-app:latest
-            christaras100/react-app:${{ github.sha }}
+            
 
   build-backend:
     needs: detect-changes
