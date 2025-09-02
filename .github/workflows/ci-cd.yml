@@ -59,7 +59,7 @@ jobs:
           file: ./react-app/Dockerfile
           push: true
           tags: |
-            christaras100/react-app:latest
+            christaras100/react_app:latest
             
 
   build-backend:
