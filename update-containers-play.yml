@@ -1,0 +1,22 @@
+- name: Push Latest version of Docker Images and run
+  hosts: ec2-hosts
+  become: yes
+  vars:
+    app_dir: /opt/react-springboot-app
+    
+  tasks:  
+
+    - name: Pull latest frontend $ backend image
+      ansible.builtin.shell: docker compose pull
+      args:
+        chdir: "{{ app_dir }}"
+
+    - name: Stop and remove existing containers
+      ansible.builtin.shell: docker compose down
+      args:
+        chdir: "{{ app_dir }}"
+      
+    - name: Start containers with the new images
+      ansible.builtin.shell: docker compose up -d
+      args:
+        chdir: "{{ app_dir }}"

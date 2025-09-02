@@ -89,5 +89,5 @@ jobs:
           file: ./springboot-app/Dockerfile
           push: true
           tags: |
-            myuser/springboot-app:latest
-            myuser/springboot-app:${{ github.sha }}
+            christosag/springboot_app:latest
+           
