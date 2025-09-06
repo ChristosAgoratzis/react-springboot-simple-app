@@ -1,0 +1,7 @@
+/home/christosag/full-stack-app-minimal/springboot-app/src/main/java/com/example/spring_app/SpringAppApplication.java
+/home/christosag/full-stack-app-minimal/springboot-app/src/main/java/com/example/spring_app/config/SecurityConfig.java
+/home/christosag/full-stack-app-minimal/springboot-app/src/main/java/com/example/spring_app/config/WebConfig.java
+/home/christosag/full-stack-app-minimal/springboot-app/src/main/java/com/example/spring_app/controller/UserController.java
+/home/christosag/full-stack-app-minimal/springboot-app/src/main/java/com/example/spring_app/model/User.java
+/home/christosag/full-stack-app-minimal/springboot-app/src/main/java/com/example/spring_app/repository/UserRepository.java
+/home/christosag/full-stack-app-minimal/springboot-app/src/main/java/com/example/spring_app/service/UserService.java

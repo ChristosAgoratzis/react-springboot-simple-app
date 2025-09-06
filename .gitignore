@@ -1,4 +1,4 @@
-springboot-app/src/main/resources/application.properties
+
 .env
 terraform-key.pem
 hosts.ini
