@@ -12,6 +12,12 @@ services:
   backend:
     image: christaras100/spring_app:latest
     container_name: spring_app
+    environment:
+      - SPRING_DATASOURCE_URL=${DB_URL}
+      - SPRING_DATASOURCE_USERNAME=${DB_USER}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASS}
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_JPA_SHOW_SQL=true
     networks:
       - full-stack-app-network
 

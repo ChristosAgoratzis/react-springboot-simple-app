@@ -1,6 +1,5 @@
 ---
-- name: Deploy React-Springboot App on Ubuntu 24.04
-  hosts: ec2-hosts
+- name: Install Docker, Docker Compose
   become: yes
   vars:
     app_dir: /opt/react-springboot-app
@@ -57,30 +56,4 @@
         name: docker-compose-plugin
         state: present
 
-    - name: Create application directory
-      ansible.builtin.file:
-        path: "{{ app_dir }}"
-        state: directory
-        mode: '0755'
-
-    - name: Copy docker-compose.yml
-      ansible.builtin.copy:
-        src: docker-compose.yml
-        dest: "{{ app_dir }}/docker-compose.yml"
-        mode: '0644'
-
-    - name: Copy .env file
-      ansible.builtin.copy:
-        src: .env
-        dest: "{{ app_dir }}/.env"
-        mode: '0644'
-
-    - name: Pull Docker images
-      ansible.builtin.shell: docker compose pull
-      args:
-        chdir: "{{ app_dir }}"
-
-    - name: Start Docker Compose application
-      ansible.builtin.shell: docker compose up -d
-      args:
-        chdir: "{{ app_dir }}"
+    
