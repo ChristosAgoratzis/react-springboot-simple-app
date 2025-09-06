@@ -8,7 +8,7 @@ import com.example.spring_app.repository.UserRepository;
 
 /**
  * Service class for managing User entities.
- * Provides methods for CRUD operations on users.
+ * Provides methods for CRUD operations on users!.
  */
 
 @Service

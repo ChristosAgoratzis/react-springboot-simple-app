@@ -98,5 +98,5 @@ jobs:
           file: ./springboot-app/Dockerfile
           push: true
           tags: |
-            christosag/springboot_app:latest
+            christaras100/springboot_app:latest
            
