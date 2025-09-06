@@ -1,7 +1,7 @@
 package com.example.spring_app.controller;
 
 import com.example.spring_app.model.User;
-import com.example.spring_app.rservice.UserService;
+import com.example.spring_app.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,7 +36,7 @@ public class UserController {
     // PUT /users/{id}
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User userDetails) {
-        return userServuce.findById(id).map(user -> {
+        return userService.findById(id).map(user -> {
             user.setUsername(userDetails.getUsername());
             user.setEmail(userDetails.getEmail());
             if (userDetails.getPasswordHash() != null && !userDetails.getPasswordHash().isEmpty()) {
