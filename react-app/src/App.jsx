@@ -9,7 +9,7 @@ export default function App() {
   // Base URL: relative paths για να δουλεύει με reverse proxy
   const API_BASE = "/api";
 
-  // Fetch Users
+  // Fetch Users!!
   const fetchUsers = async () => {
     try {
       const res = await fetch(`${API_BASE}/users`);
