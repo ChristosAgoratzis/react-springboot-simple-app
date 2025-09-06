@@ -18,7 +18,7 @@ public class UserController {
     // GET /users!!
     @GetMapping("/{id}")
     public User getUserById(@PathVariable Long id) {
-        return userService.getUserById(id);
+        return userRepository.getUserById(id);
     }
 
     // GET /users!!
