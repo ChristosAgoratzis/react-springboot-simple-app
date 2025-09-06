@@ -2,7 +2,6 @@ package com.example.spring_app.controller;
 
 import com.example.spring_app.model.User;
 import com.example.spring_app.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,47 +11,52 @@ import java.util.List;
 @RequestMapping("/api/users")
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-    // GET /users!!
-    @GetMapping("/{id}")
-    public User getUserById(@PathVariable Long id) {
-        return userService.getUserById(id);
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
-    // GET /users!!
+    // GET all users
     @GetMapping
     public List<User> getAllUsers() {
         return userService.findAll();
     }
 
-    // POST /users
+    // GET user by ID
+    @GetMapping("/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+        return userService.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    // CREATE new user
     @PostMapping
     public User createUser(@RequestBody User user) {
         return userService.save(user);
     }
 
-    // PUT /users/{id}
+    // UPDATE existing user
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User userDetails) {
-        return userService.findById(id).map(user -> {
-            user.setUsername(userDetails.getUsername());
-            user.setEmail(userDetails.getEmail());
-            if (userDetails.getPasswordHash() != null && !userDetails.getPasswordHash().isEmpty()) {
-                user.setPasswordHash(userDetails.getPasswordHash());
-            }
-            userService.save(user);
-            return ResponseEntity.ok(user);
-        }).orElse(ResponseEntity.notFound().build());
+        return userService.findById(id)
+                .map(user -> {
+                    user.setUsername(userDetails.getUsername());
+                    user.setEmail(userDetails.getEmail());
+                    User updatedUser = userService.save(user);
+                    return ResponseEntity.ok(updatedUser);
+                })
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    // DELETE /users/{id}
+    // DELETE user by ID
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        return userService.findById(id).map(user -> {
-            userService.delete(user);
-            return ResponseEntity.ok().<Void>build();
-        }).orElse(ResponseEntity.notFound().build());
+        if (userService.findById(id).isPresent()) {
+            userService.deleteById(id);
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
     }
 }

@@ -1,15 +1,11 @@
 package com.example.spring_app.service;
 
-import org.springframework.stereotype.Service;
-import java.util.List;
 import com.example.spring_app.model.User;
 import com.example.spring_app.repository.UserRepository;
+import org.springframework.stereotype.Service;
 
-
-/**
- * Service class for managing User entities.
- * Provides methods for CRUD operations on users!.
- */
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -20,28 +16,19 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public User createUser(User user) {
-        return userRepository.save(user);
-    }
-
-    public List<User> getAllUsers() {
+    public List<User> findAll() {
         return userRepository.findAll();
     }
 
-    public User getUserById(Long id) {
-        return userRepository.findById(id).orElse(null);
+    public Optional<User> findById(Long id) {
+        return userRepository.findById(id);
     }
 
-    public User updateUser(Long id, User updatedUser) {
-        return userRepository.findById(id).map(user -> {
-            user.setUsername(updatedUser.getUsername());
-            user.setEmail(updatedUser.getEmail());
-            user.setPasswordHash(updatedUser.getPasswordHash());
-            return userRepository.save(user);
-        }).orElse(null);
+    public User save(User user) {
+        return userRepository.save(user);
     }
 
-    public void deleteUser(Long id) {
+    public void deleteById(Long id) {
         userRepository.deleteById(id);
     }
 }
