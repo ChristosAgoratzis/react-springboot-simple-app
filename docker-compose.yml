@@ -1,9 +1,6 @@
 services:
   frontend:
     image: christaras100/react_app:latest
-    build:
-      context: ./react-app  
-      dockerfile: Dockerfile
     container_name: react_app
     ports:
       - "80:80"
@@ -14,36 +11,10 @@ services:
 
   backend:
     image: christaras100/spring_app:latest
-    build:
-      context: ./springboot-app
-      dockerfile: Dockerfile
     container_name: spring_app
-    environment:
-      - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
-      - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
-      - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
-      - SPRING_JPA_SHOW_SQL=true
-      - SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL=true
-    depends_on:
-      - db
-    networks:
-      - full-stack-app-network
-
-  db:
-    image: postgres:15
-    container_name: postgres_db
-    restart: always
-    environment:
-      POSTGRES_USER: ${DATABASE_USER}
-      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
-      POSTGRES_DB: ${DATABASE_NAME}
-    volumes:
-      - pgdata:/var/lib/postgresql/data
     networks:
       - full-stack-app-network
 
 networks:
   full-stack-app-network:
-volumes:
-  pgdata:
+
