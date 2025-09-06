@@ -10,7 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "http://frontend/")
+@CrossOrigin(origins = "*")
 public class UserController {
 
     @Autowired
