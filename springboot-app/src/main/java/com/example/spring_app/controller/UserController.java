@@ -1,7 +1,7 @@
 package com.example.spring_app.controller;
 
 import com.example.spring_app.model.User;
-import com.example.spring_app.repository.UserRepository;
+import com.example.spring_app.rservice.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,36 +13,36 @@ import java.util.List;
 public class UserController {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     // GET /users!!
     @GetMapping("/{id}")
     public User getUserById(@PathVariable Long id) {
-        return userRepository.getUserById(id);
+        return userService.getUserById(id);
     }
 
     // GET /users!!
     @GetMapping
     public List<User> getAllUsers() {
-        return userRepository.findAll();
+        return userService.findAll();
     }
 
     // POST /users
     @PostMapping
     public User createUser(@RequestBody User user) {
-        return userRepository.save(user);
+        return userService.save(user);
     }
 
     // PUT /users/{id}
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User userDetails) {
-        return userRepository.findById(id).map(user -> {
+        return userServuce.findById(id).map(user -> {
             user.setUsername(userDetails.getUsername());
             user.setEmail(userDetails.getEmail());
             if (userDetails.getPasswordHash() != null && !userDetails.getPasswordHash().isEmpty()) {
                 user.setPasswordHash(userDetails.getPasswordHash());
             }
-            userRepository.save(user);
+            userService.save(user);
             return ResponseEntity.ok(user);
         }).orElse(ResponseEntity.notFound().build());
     }
@@ -50,8 +50,8 @@ public class UserController {
     // DELETE /users/{id}
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        return userRepository.findById(id).map(user -> {
-            userRepository.delete(user);
+        return userService.findById(id).map(user -> {
+            userService.delete(user);
             return ResponseEntity.ok().<Void>build();
         }).orElse(ResponseEntity.notFound().build());
     }
